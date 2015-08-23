@@ -444,15 +444,96 @@ __END__
 
 =head1 NAME
 
-Geo::OpenLocationCode - It's new $module
+Geo::OpenLocationCode - Encode / Decode Open Location Codes.
 
 =head1 SYNOPSIS
 
     use Geo::OpenLocationCode;
 
+    encode(35.6292765,139.7939337);      # 8Q7XJQHV+PH
+    encode(35.6292765,139.7939337, 12);  # 8Q7XJQHV+PH75
+
+    my $area = decode('8Q7XJQHV+QF');
+    $area->code_length;       # 10
+    $area->latitude_center;   # 35.6293125
+    $area->latitude_hi;       # 35.629375
+    $area->latitude_lo;       # 35.62925
+    $area->longitude_center;  # 139.7939375
+    $area->longitude_hi;      # 139.794
+    $area->longitude_lo;      # 139.793875
+
 =head1 DESCRIPTION
 
-Geo::OpenLocationCode is ...
+Open Location Codes are a way of encoding location into a form that is easier to use than latitude and longitude.
+
+This module encodes and decodes Open Location Codes.
+
+See http://openlocationcode.com/ for more information.
+
+=head1 METHODS
+
+=head2 encode
+
+Encode a location into an Open Location Code. This takes a latitude and
+longitude and an optional length. If the length is not specified, a code
+with 10 characters (excluding the prefix and separator) will be generated.
+
+    encode(35.6292765, 139.7939337);      # 8Q7XJQHV+PH
+    encode(35.6292765, 139.7939337, 12);  # 8Q7XJQHV+PH75
+
+=head2 decode
+
+Decodes an Open Location Code into the location coordinates. This method
+takes a string. If the string is a valid full Open Location Code, it
+returns an object with the lower and upper latitude and longitude pairs,
+the center latitude and longitude, and the length of the original code.
+
+    my $area = decode('8Q7XJQHV+QF');
+
+    $area->code_length;       # 10
+    $area->latitude_center;   # 35.6293125
+    $area->latitude_hi;       # 35.629375
+    $area->latitude_lo;       # 35.62925
+    $area->longitude_center;  # 139.7939375
+    $area->longitude_hi;      # 139.794
+    $area->longitude_lo;      # 139.793875
+
+=head2 shorten
+
+    shorten();
+
+=head2 recover_nearest
+
+This method is passed a valid short Open Location Code (of four to seven
+characters) and a latitude and longitude, and returns the nearest
+matching full Open Location Code to the specified location.
+
+    recover_nearest();
+
+=head2 is_valid
+
+Determines if a code is a valid Open Location Code sequence or not.
+
+    is_valid('8FWC2345+G6'); # 1
+    is_valid('8FWC2345+G');  # 0
+
+=head2 is_short
+
+Determines if a code is a valid short Open Location Code or not.
+
+    is_short('+G6');       # 1
+    is_short('8FWCX400+'); # 0
+
+=head2 is_full
+
+Determines if a code is a valid full Open Location Code.
+
+    is_full('8FWC2345+G6'); # 1
+    is_full('2345+G6');     # 0
+
+=head1 SEE ALSO
+
+https://github.com/google/open-location-code/blob/master/API.txt
 
 =head1 LICENSE
 
