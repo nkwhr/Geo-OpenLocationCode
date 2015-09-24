@@ -7,9 +7,9 @@ use Carp;
 use List::Util qw/min max/;
 use POSIX qw/floor fmod/;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
-our @EXPORT = qw/encode decode is_valid is_short is_full recover_nearest shorten/;
+our @EXPORT = qw/get_alphabet encode decode is_valid is_short is_full recover_nearest shorten/;
 
 use constant {
     SEPARATOR => '+',
@@ -27,11 +27,6 @@ use constant {
     MIN_TRIMMABLE_CODE_LEN => 6,
 };
 
-use constant {
-    TRUE => 1,
-    FALSE => 0,
-};
-
 sub get_alphabet {
     return CODE_ALPHABET;
 }
@@ -40,26 +35,26 @@ sub is_valid {
     my $code = shift;
 
     if (! $code) {
-        return FALSE;
+        return 0;
     }
 
     my $pos = index($code, SEPARATOR);
 
     if ($pos == -1 || $pos != rindex($code, SEPARATOR)) {
-        return FALSE;
+        return 0;
     }
 
     if (length($code) == 1) {
-        return FALSE;
+        return 0;
     }
 
     if ($pos > SEPARATOR_POSITION || $pos % 2 == 1) {
-        return FALSE;
+        return 0;
     }
 
     if (index($code, PADDING_CHARACTER) > -1) {
         if (index($code, PADDING_CHARACTER) == 0) {
-            return FALSE;
+            return 0;
         }
 
         my @pad_match = ($code =~ /(${ \(PADDING_CHARACTER) }+)/g);
@@ -67,16 +62,16 @@ sub is_valid {
         if (scalar(@pad_match) > 1 ||
             length($pad_match[0]) % 2 == 1 ||
             length($pad_match[0]) > SEPARATOR_POSITION - 2) {
-            return FALSE;
+            return 0;
         }
 
         if (substr($code, length($code) - 1, 1) ne SEPARATOR) {
-            return FALSE;
+            return 0;
         }
     }
 
     if (length($code) - $pos - 1 == 1) {
-        return FALSE;
+        return 0;
     }
 
     $code =~ s/\Q${ \(SEPARATOR) }//;
@@ -85,49 +80,49 @@ sub is_valid {
 
     for my $char (split //, $code) {
         if ($char ne SEPARATOR && index(CODE_ALPHABET, $char) == -1) {
-            return FALSE;
+            return 0;
         }
     }
-    return TRUE;
+    return 1;
 }
 
 sub is_short {
     my $code = shift;
 
     if (! is_valid($code)) {
-        return FALSE;
+        return 0;
     }
 
     my $pos = index($code, SEPARATOR);
 
     if ($pos >= 0 && $pos < SEPARATOR_POSITION) {
-        return TRUE;
+        return 1;
     }
 
-    return FALSE;
+    return 0;
 }
 
 sub is_full {
     my $code = shift;
 
     if (! is_valid($code) || is_short($code)) {
-        return FALSE;
+        return 0;
     }
 
     my $first_lat_value = index(CODE_ALPHABET, substr(uc $code, 0, 1)) * ENCODING_BASE;
 
     if ($first_lat_value >= LATITUDE_MAX * 2) {
-        return FALSE;
+        return 0;
     }
 
     if (length $code > 1) {
         my $first_lng_value = index(CODE_ALPHABET, substr(uc $code, 1, 1)) * ENCODING_BASE;
         if ($first_lng_value >= LONGITUDE_MAX * 2) {
-            return FALSE;
+            return 0;
         }
     }
 
-    return TRUE;
+    return 1;
 }
 
 sub encode {
@@ -216,17 +211,17 @@ sub recover_nearest {
     my $degrees_difference = $code_area->latitude_center - $reference_latitude;
 
     if ($degrees_difference > $area_to_edge) {
-        $code_area->{latitude_center} -= $resolution;
+        $code_area->latitude_center -= $resolution;
     } elsif ($degrees_difference < -$area_to_edge) {
-        $code_area->{latitude_center} += $resolution;
+        $code_area->latitude_center += $resolution;
     }
 
     $degrees_difference = $code_area->longitude_center - $reference_longitude;
 
     if ($degrees_difference > $area_to_edge) {
-        $code_area->{longitude_center} -= $resolution;
+        $code_area->longitude_center -= $resolution;
     } elsif ($degrees_difference < -$area_to_edge) {
-        $code_area->{longitude_center} += $resolution;
+        $code_area->longitude_center += $resolution;
     }
 
     return encode(
@@ -417,9 +412,6 @@ sub _decode_grid {
 
 package Geo::OpenLocationCode::CodeArea;
 use List::Util qw/min/;
-use Class::Accessor::Lite (
-    ro => [ qw/latitude_lo longitude_lo latitude_hi longitude_hi code_length latitude_center longitude_center/ ]
-);
 
 sub new {
     my $class = shift;
@@ -434,6 +426,34 @@ sub new {
         latitude_center  => min($latitude_lo + ($latitude_hi - $latitude_lo) / 2, Geo::OpenLocationCode::LATITUDE_MAX()),
         longitude_center => min($longitude_lo + ($longitude_hi - $longitude_lo) / 2, Geo::OpenLocationCode::LONGITUDE_MAX()),
     }, $class;
+}
+
+sub latitude_lo {
+    $_[0]->{latitude_lo};
+}
+
+sub longitude_lo {
+    $_[0]->{longitude_lo};
+}
+
+sub latitude_hi {
+    $_[0]->{latitude_hi};
+}
+
+sub longitude_hi {
+    $_[0]->{longitude_hi};
+}
+
+sub code_length {
+    $_[0]->{code_length};
+}
+
+sub latitude_center : lvalue {
+    $_[0]->{latitude_center};
+}
+
+sub longitude_center : lvalue {
+    $_[0]->{longitude_center};
 }
 
 1;

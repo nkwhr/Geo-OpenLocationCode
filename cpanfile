@@ -1,4 +1,3 @@
-requires 'Class::Accessor::Lite';
 requires 'List::Util';
 requires 'perl', '5.008001';
 
