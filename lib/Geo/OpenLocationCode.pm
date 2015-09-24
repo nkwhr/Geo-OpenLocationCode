@@ -500,26 +500,34 @@ the center latitude and longitude, and the length of the original code.
 
 =head2 shorten
 
-    shorten();
+Remove the first four to eight characters from a valid full
+Open Location Code and a latitude and longitude. The number
+of characters that can be removed depends on the distance
+between the code center and the reference location.
+
+    shorten('9C3W9QCJ+2VX', 51.3701125, -1.217765625); # +2VX
+    shorten('9C3W9QCJ+2VX', 51.3708675, -1.217765625); # CJ+2VX
+    shorten('9C3W9QCJ+2VX', 51.3852125, -1.217765625); # 9QCJ+2VX
 
 =head2 recover_nearest
 
-This method is passed a valid short Open Location Code (of four to seven
-characters) and a latitude and longitude, and returns the nearest
-matching full Open Location Code to the specified location.
+Returns the nearest matching full Open Location Code from a
+valid short Open Location Code (of four to seven characters)
+and a latitude and longitude.
 
-    recover_nearest();
+    recover_nearest('+2VX', 51.3701125, -1.217765625);     # 9C3W9QCJ+2VX
+    recover_nearest('9QCJ+2VX', 51.3852125, -1.217765625); # 9C3W9QCJ+2VX
 
 =head2 is_valid
 
-Determines if a code is a valid Open Location Code sequence or not.
+Determines if a code is a valid Open Location Code sequence.
 
     is_valid('8FWC2345+G6'); # 1
     is_valid('8FWC2345+G');  # 0
 
 =head2 is_short
 
-Determines if a code is a valid short Open Location Code or not.
+Determines if a code is a valid short Open Location Code.
 
     is_short('+G6');       # 1
     is_short('8FWCX400+'); # 0
