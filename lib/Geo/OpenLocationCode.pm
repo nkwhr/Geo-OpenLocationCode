@@ -7,7 +7,7 @@ use Carp;
 use List::Util qw/min max/;
 use POSIX qw/floor fmod/;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 our @EXPORT = qw/get_alphabet encode decode is_valid is_short is_full recover_nearest shorten/;
 

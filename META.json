@@ -42,7 +42,6 @@
       },
       "runtime" : {
          "requires" : {
-            "Class::Accessor::Lite" : "0",
             "List::Util" : "0",
             "perl" : "5.008001"
          }
@@ -65,5 +64,5 @@
          "web" : "https://github.com/nkwhr/Geo-OpenLocationCode"
       }
    },
-   "version" : "0.01"
+   "version" : "0.02"
 }
