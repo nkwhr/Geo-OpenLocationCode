@@ -216,17 +216,17 @@ sub recover_nearest {
     my $degrees_difference = $code_area->latitude_center - $reference_latitude;
 
     if ($degrees_difference > $area_to_edge) {
-        $code_area->{latitude_center} -= $resolution;
+        $code_area->latitude_center -= $resolution;
     } elsif ($degrees_difference < -$area_to_edge) {
-        $code_area->{latitude_center} += $resolution;
+        $code_area->latitude_center += $resolution;
     }
 
     $degrees_difference = $code_area->longitude_center - $reference_longitude;
 
     if ($degrees_difference > $area_to_edge) {
-        $code_area->{longitude_center} -= $resolution;
+        $code_area->longitude_center -= $resolution;
     } elsif ($degrees_difference < -$area_to_edge) {
-        $code_area->{longitude_center} += $resolution;
+        $code_area->longitude_center += $resolution;
     }
 
     return encode(
@@ -417,9 +417,6 @@ sub _decode_grid {
 
 package Geo::OpenLocationCode::CodeArea;
 use List::Util qw/min/;
-use Class::Accessor::Lite (
-    ro => [ qw/latitude_lo longitude_lo latitude_hi longitude_hi code_length latitude_center longitude_center/ ]
-);
 
 sub new {
     my $class = shift;
@@ -434,6 +431,34 @@ sub new {
         latitude_center  => min($latitude_lo + ($latitude_hi - $latitude_lo) / 2, Geo::OpenLocationCode::LATITUDE_MAX()),
         longitude_center => min($longitude_lo + ($longitude_hi - $longitude_lo) / 2, Geo::OpenLocationCode::LONGITUDE_MAX()),
     }, $class;
+}
+
+sub latitude_lo {
+    $_[0]->{latitude_lo};
+}
+
+sub longitude_lo {
+    $_[0]->{longitude_lo};
+}
+
+sub latitude_hi {
+    $_[0]->{latitude_hi};
+}
+
+sub longitude_hi {
+    $_[0]->{longitude_hi};
+}
+
+sub code_length {
+    $_[0]->{code_length};
+}
+
+sub latitude_center : lvalue {
+    $_[0]->{latitude_center};
+}
+
+sub longitude_center : lvalue {
+    $_[0]->{longitude_center};
 }
 
 1;
