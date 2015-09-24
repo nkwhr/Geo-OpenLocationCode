@@ -1,10 +1,10 @@
 {
-   "abstract" : "It's new $module",
+   "abstract" : "Encode / Decode Open Location Codes.",
    "author" : [
       "nkwhr <naoya.kawahara[at]gmail.com>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Minilla/v2.5.0, CPAN::Meta::Converter version 2.150005",
+   "generated_by" : "Minilla/v2.5.0, CPAN::Meta::Converter version 2.142060",
    "license" : [
       "perl_5"
    ],
@@ -65,6 +65,5 @@
          "web" : "https://github.com/nkwhr/Geo-OpenLocationCode"
       }
    },
-   "version" : "0.01",
-   "x_serialization_backend" : "JSON::PP version 2.27202"
+   "version" : "0.01"
 }
