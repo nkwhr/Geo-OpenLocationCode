@@ -9,7 +9,7 @@ use POSIX qw/floor fmod/;
 
 our $VERSION = '0.01';
 
-our @EXPORT = qw/encode decode is_valid is_short is_full recover_nearest shorten/;
+our @EXPORT = qw/get_alphabet encode decode is_valid is_short is_full recover_nearest shorten/;
 
 use constant {
     SEPARATOR => '+',
